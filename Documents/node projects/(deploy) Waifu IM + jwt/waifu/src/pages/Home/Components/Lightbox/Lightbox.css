@@ -1,0 +1,132 @@
+.lightbox {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100dvh;
+
+    display: none;
+    opacity: 0;
+
+    flex-direction: column;
+
+    backdrop-filter: blur(12px);
+    background: rgba(46, 69, 85, 0.5);
+
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+.lightbox.active {
+    display: flex;
+    opacity: 1;
+}
+
+
+/* navbar */
+.lightbox-header {
+    flex: 0 0 5%;
+    max-height: 5%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+    gap:20px;
+
+    padding: 10px;
+    overflow: hidden;
+
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.header-buttons {
+    color: white;
+    background: rgba(0, 0, 0, 0.75);
+
+    border-radius: 3px;
+    border: none;
+
+    width: 200px;
+
+    transition: all 0.5s ease;
+}
+
+.header-buttons.favourite.success,
+.header-buttons.remove.success {
+    background-color: rgba(44, 176, 44, 0.78);
+    color: white;
+    pointer-events: none;
+}
+
+.header-buttons.favourite.error,
+.header-buttons.remove.error {
+    background-color: red;
+    color:white;
+    pointer-events: none;
+}
+
+.header-buttons.favourite:hover {
+    color:gold;
+}
+
+.header-buttons:hover {
+    filter: brightness(200%);
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.header-buttons.favourite.added {
+    position: relative;
+    background-color: rgba(44, 176, 44, 0.78);
+    color:white;
+}
+
+.header-buttons.favourite.added:hover {
+    background-color: red;
+    color: transparent;
+}
+
+.header-buttons.favourite.added:hover::after {
+    content: "Remove?";
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font: inherit;
+    pointer-events: none;
+}
+
+/* зона с картинкой лайтбокса */
+.lightbox-overlay {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    width:100%;
+    padding: 20px;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightbox-content {
+    max-width: 75%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+.lightbox-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
