@@ -8,18 +8,25 @@ const FavouritesContext = createContext(null);
 export const useFavourites = () => useContext(FavouritesContext);
 
 export const FavouritesProvider = ({ children }) => {
-  const [favourites, setFavourites] = useState([]);
-  const { token, logout } = useAuth();
+    const [fetchStatus, setFetchStatus] = useState("loading");
+    const [favourites, setFavourites] = useState([]);
+    const { token, logout } = useAuth();
 
-  useEffect(() => {
-    if (!token) {
-        setFavourites([]);
-        return;
-    }
-
-    const getFavourites = async () => {
+    useEffect(() => {
+        if (!token) {
+            setFavourites([]);
+            return;
+        }
+        
+        const controller = new AbortController();
+        const getFavourites = async () => {
             try {
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                }, 60000);
+
                 const response = await fetch(`${BASE_URL}/fav/getFavourite`, {
+                    signal: controller.signal,
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -34,17 +41,21 @@ export const FavouritesProvider = ({ children }) => {
                 const data = await response.json();
 
                 setFavourites(data);
+                setFetchStatus("success");
             } catch (error) {
                 console.error("Fetch error:", error.message);
+                setFetchStatus("error");
             }
         }
 
         getFavourites();
-  }, [token, logout]);
 
-  return (
-    <FavouritesContext.Provider value={{ favourites, setFavourites }}>
-      {children}
-    </FavouritesContext.Provider>
-  );
+        return () => controller.abort();
+    }, [token, logout]);
+
+    return (
+        <FavouritesContext.Provider value={{ favourites, setFavourites, fetchStatus }}>
+            {children}
+        </FavouritesContext.Provider>
+    );
 };

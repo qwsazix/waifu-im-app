@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useFavourites } from "../../context/FavouritesContext";
 
+import { LoaderCircle } from 'lucide-react';
+
 import Lightbox from "../Home/Components/Lightbox/Lightbox";
 
 import './Cabinet.css';
@@ -9,7 +11,7 @@ import './Cabinet.css';
 const Cabinet = () => {
     const [isActive, setActive] = useState(false);
     const [currentImage, setCurrentImage] = useState(null);
-    const { favourites } = useFavourites();
+    const { favourites, fetchStatus } = useFavourites();
 
 
     const openLightBox = (url) => {
@@ -21,7 +23,7 @@ const Cabinet = () => {
         setActive(false);
         setCurrentImage(null);
     }
-    
+
     const { token, setToken } = useAuth();
 
     useEffect(() => {
@@ -33,33 +35,44 @@ const Cabinet = () => {
 
 
     return (
-        <>
-            {
-                token ? (
-                    <div className="fav-container" >
-                        {
-                            favourites.length === 0 ? (
-                                <p className="empty-fav">
-                                    You haven't saved any images yet (or server is down)
-                                </p>
-                            ) : (
-                                favourites.map((url, index) => (
-                                    <img
-                                        key={index}
-                                        className="favourite-img"
-                                        src={url}
-                                        alt="Favourite"
-                                        onClick={() => openLightBox(url)}
-                                    />
-                                ))
-                            )
-                        }
-                    </div >
-                ) : (
-                    <div className="fav-container">
-                        <p className="empty-fav">You are not logged in.</p>
-                    </div>
-                )}
+        <div className="cabinet">
+            {fetchStatus === 'loading' && (
+                <div className="loading">
+                    <p>Please wait for the server to wake up</p>
+                    <LoaderCircle className="loader" size={45} />
+                </div>
+            )}
+            
+            {fetchStatus === 'success' && (
+                <>
+                    {token ? (
+                        <div className="fav-container" >
+                            {
+                                favourites.length === 0 ? (
+                                    <p className="empty-fav">
+                                        You haven't saved any images yet (or server is down)
+                                    </p>
+                                ) : (
+                                    favourites.map((url, index) => (
+                                        <img
+                                            key={index}
+                                            className="favourite-img"
+                                            src={url}
+                                            alt="Favourite"
+                                            onClick={() => openLightBox(url)}
+                                        />
+                                    ))
+                                )
+                            }
+                        </div >
+                    ) : (
+                        <div className="fav-container">
+                            <p className="empty-fav">You are not logged in.</p>
+                        </div>
+                    )}
+                </>
+            )
+            }
 
             <Lightbox
                 isActive={isActive}
@@ -67,7 +80,7 @@ const Cabinet = () => {
                 imageSrc={currentImage}
                 mode="cabinet"
             />
-        </>
+        </div>
     );
 };
 
