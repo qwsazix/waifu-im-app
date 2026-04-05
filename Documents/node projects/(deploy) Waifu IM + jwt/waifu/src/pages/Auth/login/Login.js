@@ -107,7 +107,7 @@ function Login({ theme }) {
 
                 {fetchStatus === 'loading' && (
                     <div className="loading">
-                        <p>Please wait for the server to response</p>
+                        <p>Please wait for the server respond</p>
                         <LoaderCircle className="loader" size={45} />
                     </div>
                 )}

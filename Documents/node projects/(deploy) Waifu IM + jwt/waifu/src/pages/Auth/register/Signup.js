@@ -124,21 +124,21 @@ function Signup({ theme }) {
 
                 {fetchStatus === 'loading' && (
                     <div className="loading">
-                        <p>Please wait for the server to response</p>
+                        <p>Please wait for the server respond</p>
                         <LoaderCircle className="loader" size={45} />
                     </div>
                 )}
 
                 {fetchStatus === 'success' && (
                     <div className="loading">
-                        <p>Registration successful. You will be redirected to the authorization page in a few seconds.</p>
+                        <p>Registration successful. Redirecting...</p>
                         <LoaderCircle className="loader" size={45} />
                     </div>
                 )}
 
                 {fetchStatus === 'error' && (
                     <div className='loading'>
-                        <p style={{ color: 'red' }}>Registration failed. Please check your console.</p>
+                        <p style={{ color: 'red' }}>Registration failed</p>
                         <button className="avg-button" onClick={() => setFetchStatus('sleep')}>
                             Try Again
                         </button>

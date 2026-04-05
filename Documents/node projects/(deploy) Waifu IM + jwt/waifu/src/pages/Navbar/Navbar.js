@@ -25,8 +25,14 @@ const Navbar = ({ onToggleTheme, theme }) => {
           target="_blank"
           rel="noreferrer"
         >
+        <div className='navbar-logo'>
+          <img src={`${process.env.PUBLIC_URL}/makise192.png`}
+          alt='site logo'
+          />
+        </div>
           Waifu.im
         </a>
+
 
         <button
           className="navbar-toggler"

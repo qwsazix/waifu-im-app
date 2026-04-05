@@ -1,6 +1,7 @@
 import { useAuth } from "../../../../../context/AuthContext";
 import { useFavourites } from "../../../../../context/FavouritesContext";
 import { useState, useEffect, useRef } from "react";
+import { Trash2 } from 'lucide-react';
 
 import { BASE_URL } from "../../../../../config";
 
@@ -127,7 +128,7 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                         }`}
                     title="Add/remove to favourites (you can check your images in the cabinet)"
                     onClick={addToFavourite}
-                >{status 
+                >{status
                     ? status.message
                     : favourites.includes(imageSrc)
                         ? 'Already in favourites'
@@ -140,7 +141,12 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                     className={`header-buttons remove ${status ? status.type : ""}`}
                     title="Remove from favourites"
                     onClick={() => removeFavourite(imageSrc)}
-                >{status ? status.message : "🗑 Remove"}</button>
+                >{status ? (status.message) : (
+                    <>
+                        <Trash2 size={16} />
+                        <span>Remove</span>
+                    </>
+                )}</button>
             )}
         </div>
     )

@@ -1,5 +1,5 @@
 import Lightbox from "./Components/Lightbox/Lightbox";
-import FilterPanel from "./Components/FilterPanel/FilterPanel";
+import Main from "./Components/Main/Main";
 import { useState, useEffect } from 'react';
 import { useAuth } from "../../context/AuthContext";
 
@@ -51,7 +51,7 @@ export default function Home() {
 
     return (
         <>
-            <FilterPanel
+            <Main
                 openLightBox={openLightBox}
             />
             <Lightbox

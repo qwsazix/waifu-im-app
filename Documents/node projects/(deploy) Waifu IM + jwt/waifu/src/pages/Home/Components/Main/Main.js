@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import SfwTags from './Components/SfwTags.js';
 import NsfwTags from './Components/NsfwTags.js';
 import ImageFeed from '../ImageFeed/ImageFeed.js';
-import './FilterPanel.css';
+import './Main.css';
 
-const FilterPanel = ({ openLightBox }) => {
+const Main = ({ openLightBox }) => {
     const baseURL = "https://api.waifu.im";
 
 
@@ -101,12 +101,21 @@ const FilterPanel = ({ openLightBox }) => {
                     />
                 </div>
 
+                <div className='button-container'>
+                    <button
+                        className='avg-button search'
+                        onClick={handleSearch}
+                        title='Fetch images from waifu.im database'
+                    >{selectedTags.length === 0 ? 'Search (random)' : 'Search'}</button>
 
-                <button
-                    className='avg-button search'
-                    onClick={handleSearch}
-                    title='Fetch images from waifu.im database'
-                >{selectedTags.length === 0 ? 'Search (random)' : 'Search (by tags)'}</button>
+                    {fetchedImages.length > 0 && (
+                        <button
+                            className='avg-button feedClear'
+                            onClick={() => setFetchedImage([])}
+                            title='Remove all images from image feed'
+                        >Clear images</button>
+                    )}
+                </div>
 
                 {isNsfw === 'True' && (
                     <span className="label-text warning">Search now includes ONLY NSFW materials</span>
@@ -115,7 +124,7 @@ const FilterPanel = ({ openLightBox }) => {
                 {isNsfw === 'All' && (
                     <span className="label-text warning">Search now includes BOTH NSFW and SFW materials</span>
                 )}
-            </div>  
+            </div>
 
             <ImageFeed
                 fetchedImages={fetchedImages}
@@ -126,4 +135,4 @@ const FilterPanel = ({ openLightBox }) => {
     )
 };
 
-export default FilterPanel;
+export default Main;

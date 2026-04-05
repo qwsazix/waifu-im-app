@@ -14,47 +14,47 @@ import Login from './pages/Auth/login/Login';
 import Signup from './pages/Auth/register/Signup';
 
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { FavouritesProvider } from './context/FavouritesContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { useTheme } from './context/ThemeContext';
 
-
-const basename = process.env.PUBLIC_URL || "/";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 function Root() {
-  const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem("theme");
-
-    if (saved) return saved;
-
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  });
-
-  useEffect(() => {
-    document.body.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(t => (t === 'light' ? 'dark' : 'light'));
-  };
-
   return (
-    <AuthProvider>
-      <FavouritesProvider>
-        <BrowserRouter basename={basename}>
-          <Navbar onToggleTheme={toggleTheme} theme={theme} />
-          <Routes>
-            <Route index element={<Home />} />
-            <Route path="/cabinet" element={<Cabinet />} />
-            <Route path="/signup" element={<Signup theme={theme} />} />
-            <Route path="/signin" element={<Login theme={theme} />} />
-          </Routes>
-        </BrowserRouter>
-      </FavouritesProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <FavouritesProvider>
+          <HashRouter>
+            <NavbarWrapper />
+            <Routes>
+              <Route index element={<Home />} />
+              <Route path="/cabinet" element={<Cabinet />} />
+              <Route path="/signup" element={<SignupWrapper />} />
+              <Route path="/signin" element={<LoginWrapper />} />
+            </Routes>
+          </HashRouter>
+        </FavouritesProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
+}
+
+function NavbarWrapper() {
+  const { theme, toggleTheme } = useTheme();
+  return <Navbar theme={theme} onToggleTheme={toggleTheme} />;
+}
+
+function SignupWrapper() {
+  const { theme } = useTheme();
+  return <Signup theme={theme} />;
+}
+
+function LoginWrapper() {
+  const { theme } = useTheme();
+  return <Login theme={theme} />
 }
 
 root.render(<Root />);

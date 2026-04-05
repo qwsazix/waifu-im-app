@@ -21,7 +21,7 @@ export const FavouritesProvider = ({ children }) => {
         const controller = new AbortController();
         const getFavourites = async () => {
             try {
-                const timeoutId = setTimeout(() => {
+                var timeoutId = setTimeout(() => {
                     controller.abort();
                 }, 60000);
 
@@ -45,6 +45,8 @@ export const FavouritesProvider = ({ children }) => {
             } catch (error) {
                 console.error("Fetch error:", error.message);
                 setFetchStatus("error");
+            } finally {
+                clearTimeout(timeoutId);
             }
         }
 
