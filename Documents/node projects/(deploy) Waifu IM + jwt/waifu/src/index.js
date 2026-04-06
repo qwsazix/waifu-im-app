@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,10 +19,24 @@ import { AuthProvider } from './context/AuthContext';
 import { FavouritesProvider } from './context/FavouritesContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { useTheme } from './context/ThemeContext';
+import { BASE_URL } from "./config";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 function Root() {
+  useEffect(() => {
+    const pingingServer = async () => {
+      try {
+      const response = await fetch(`${BASE_URL}/ping`);
+      if (response.ok) console.log('Server is awake and ready');
+      } catch (err) {
+        console.log('Server is pinged and waking up.');
+      }
+    }
+
+    pingingServer();
+  }, []);
+
   return (
     <ThemeProvider>
       <AuthProvider>

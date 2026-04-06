@@ -72,7 +72,7 @@ const Cabinet = () => {
                                 <img
                                     key={url}
                                     className="favourite-img"
-                                    src={getThumbnail(url)}
+                                    src={url}
                                     alt="Favourite"
                                     onClick={() => openLightBox(url)}
                                 />
