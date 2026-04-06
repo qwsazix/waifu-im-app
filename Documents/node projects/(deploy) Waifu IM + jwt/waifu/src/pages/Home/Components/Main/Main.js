@@ -50,6 +50,9 @@ const Main = ({ openLightBox }) => {
         const params = new URLSearchParams();
         selectedTags.forEach(tag => params.append('IncludedTags', tag))
         params.append('isNsfw', isNsfw);
+        fetchedImages.slice(-100).forEach(img => {
+            params.append('ExcludedIds', img.id);
+        });
 
         try {
             const response = await fetch(`${baseURL}/images?${params.toString()}`);

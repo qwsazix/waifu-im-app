@@ -101,7 +101,6 @@
     pointer-events: none;
 }
 
-/* зона с картинкой лайтбокса */
 .lightbox-overlay {
     flex: 1 1 auto;
     min-height: 0;
@@ -112,6 +111,7 @@
     display:flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .lightbox-content {
@@ -123,6 +123,7 @@
     align-items: center;
 
     overflow: hidden;
+    cursor: auto;
 }
 
 .lightbox-img {

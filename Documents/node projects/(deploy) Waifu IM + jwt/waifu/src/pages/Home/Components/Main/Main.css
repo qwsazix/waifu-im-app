@@ -59,6 +59,7 @@ html, body {
     cursor: zoom-in;
 
     object-fit: contain;
+    user-select: none;
 }
 
 .feed-button {

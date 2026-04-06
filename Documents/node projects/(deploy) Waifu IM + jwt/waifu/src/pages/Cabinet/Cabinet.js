@@ -8,11 +8,12 @@ import Lightbox from "../Home/Components/Lightbox/Lightbox";
 
 import './Cabinet.css';
 
+
 const Cabinet = () => {
     const [isActive, setActive] = useState(false);
     const [currentImage, setCurrentImage] = useState(null);
     const [pages, setPages] = useState(1);
-    
+
     const { favourites, fetchStatus } = useFavourites();
     const { token, setToken } = useAuth();
 
@@ -71,7 +72,7 @@ const Cabinet = () => {
                                 <img
                                     key={url}
                                     className="favourite-img"
-                                    src={url}
+                                    src={getThumbnail(url)}
                                     alt="Favourite"
                                     onClick={() => openLightBox(url)}
                                 />

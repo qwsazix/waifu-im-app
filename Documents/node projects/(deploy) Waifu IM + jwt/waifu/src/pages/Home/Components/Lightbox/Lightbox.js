@@ -12,6 +12,7 @@ export default function Lightbox({isActive, closeLightBox, imageSrc, mode}) {
             />
             <Main 
             imageSrc={imageSrc}
+            closeLightBox={closeLightBox}
             />
         </div>
     )

@@ -8,11 +8,22 @@ export default function ImageFeed({ fetchedImages, openLightBox }) {
     const page_array = fetchedImages.slice(start, start + ITEMS_ON_PAGE);
     const max_page = Math.ceil(fetchedImages.length / ITEMS_ON_PAGE);
 
+    const getThumbnail = (originalUrl) => {
+        return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=400&output=webp&il`;
+    };
+
     useEffect(() => {
         if (fetchedImages.length === 0) {
             setPages(1);
+            return;
         }
-    }, [fetchedImages]);
+
+        const currentPage = Math.ceil(fetchedImages.length / ITEMS_ON_PAGE);
+        if (pages < currentPage) {
+            setPages(currentPage); //auto swapping pages
+        }
+    }, [fetchedImages.length]);
+
     return (
         <div className={`image-feed-container ${fetchedImages.length === 0 ? 'hidden' : ''}`}>
 
@@ -25,13 +36,11 @@ export default function ImageFeed({ fetchedImages, openLightBox }) {
                 }}
             ><ChevronLeft /></button>
 
-
-
             <div className="image-feed">
                 {page_array.map((img) => (
                     <img
                         key={img.id}
-                        src={img.url}
+                        src={getThumbnail(img.url)}
                         alt={img.tags.map(t => t.description).join(', ')}
                         onClick={() => openLightBox(img.url)}
                     />
