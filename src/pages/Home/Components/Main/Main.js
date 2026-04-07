@@ -6,6 +6,7 @@ import NsfwTags from './Components/NsfwTags.js';
 import ImageFeed from '../ImageFeed/ImageFeed.js';
 import './Main.css';
 
+
 const Main = ({ openLightBox }) => {
     const baseURL = "https://api.waifu.im";
 
@@ -43,14 +44,14 @@ const Main = ({ openLightBox }) => {
                 return [...prev, tagName];
             }
         })
-        console.log(selectedTags);
     }
 
+    const [isHollow, setHollow] = useState(false);
     const handleSearch = async () => {
         const params = new URLSearchParams();
         selectedTags.forEach(tag => params.append('IncludedTags', tag))
         params.append('isNsfw', isNsfw);
-        fetchedImages.slice(-100).forEach(img => {
+        fetchedImages.slice(-300).forEach(img => {
             params.append('ExcludedIds', img.id);
         });
 
@@ -59,75 +60,81 @@ const Main = ({ openLightBox }) => {
             console.log(`${baseURL}/images?${params.toString()}`);
             if (!response.ok) throw new Error(response);
             const data = await response.json();
-            setFetchedImage(prev => {
-                const newItem = data.items[0];
+            const newItem = data.items[0];
 
-                if (!newItem) {
-                    console.log('Hollow response');
-                    return prev;
-                }
-
-                const exists = prev.some(item => item.id === newItem.id);
-                if (exists) {
-                    console.log('DUPLICATE');
-                    return prev;
-                }
-
-                return [...prev, newItem];
+            if (!newItem) setHollow(true);//no images found by selected tags OR every image of selected tags have already been fetched
+            else {
+                setHollow(false);
+                setFetchedImage(prev => [...prev, newItem])
             }
-            );
+
         } catch (error) {
             console.error(error);
         }
     }
 
+    useEffect(() => {
+        setHollow(false);
+    }, [selectedTags, isNsfw]);
+
     return (
         <div id='home'>
-            <div className='filter-panel'>
-
-                <div className='tags-container sfw'>
-                    <SfwTags
-                        tags={tags}
-                        toggle={toggleTagBtn}
-                        selectedTags={selectedTags}
-                    />
+            <div className='leftside-container'>
+                <div className={`hollow-banner ${isHollow ? 'visible' : ''}`} >
+                    <strong>No images found</strong>
+                    <span>No more images match these tags. Try a new combination.</span>
                 </div>
 
-                <div className='nsfwWrap'>
-                    <NsfwTags
-                        isNsfw={isNsfw}
-                        setNsfw={setNsfw}
-                        tags={tags}
-                        toggle={toggleTagBtn}
-                        selectedTags={selectedTags}
-                        setSelected={setSelected}
-                    />
-                </div>
+                <div className='filter-panel'>
 
-                <div className='button-container'>
-                    <button
-                        className='avg-button search'
-                        onClick={handleSearch}
-                        title='Fetch images from waifu.im database'
-                    >{selectedTags.length === 0 ? 'Search (random)' : 'Search'}</button>
+                    <div className='tags-container sfw'>
+                        <SfwTags
+                            tags={tags}
+                            toggle={toggleTagBtn}
+                            selectedTags={selectedTags}
+                        />
+                    </div>
 
-                    {fetchedImages.length > 0 && (
+                    <div className='nsfwWrap'>
+                        <NsfwTags
+                            isNsfw={isNsfw}
+                            setNsfw={setNsfw}
+                            tags={tags}
+                            toggle={toggleTagBtn}
+                            selectedTags={selectedTags}
+                            setSelected={setSelected}
+                        />
+                    </div>
+
+                    <div className='button-container'>
                         <button
-                            className='avg-button feedClear'
-                            onClick={() => setFetchedImage([])}
-                            title='Remove all images from image feed'
-                        >Clear images</button>
+                            className='avg-button search'
+                            onClick={handleSearch}
+                            title='Fetch images from waifu.im database'
+                        >{selectedTags.length === 0 ? 'Search (random)' : 'Search'}</button>
+
+                        {fetchedImages.length > 0 && (
+                            <button
+                                className='avg-button feedClear'
+                                onClick={() => {
+                                    setFetchedImage([]);
+                                    setHollow(false);
+                                }}
+                                title='Remove all images from image feed'
+                            >Clear images</button>
+                        )}
+                    </div>
+
+                    {isNsfw === 'True' && (
+                        <span className="label-text warning">Search now includes ONLY NSFW materials</span>
+                    )}
+
+                    {isNsfw === 'All' && (
+                        <span className="label-text warning">Search now includes BOTH NSFW and SFW materials</span>
                     )}
                 </div>
-
-                {isNsfw === 'True' && (
-                    <span className="label-text warning">Search now includes ONLY NSFW materials</span>
-                )}
-
-                {isNsfw === 'All' && (
-                    <span className="label-text warning">Search now includes BOTH NSFW and SFW materials</span>
-                )}
             </div>
+
 
             <ImageFeed
                 fetchedImages={fetchedImages}

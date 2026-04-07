@@ -16,6 +16,138 @@ html, body {
     gap:20px;
 }
 
+.leftside-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    flex: 0 0 30%;
+    min-height:40%;
+    gap: 25px;
+    position:relative;
+}
+
+.hollow-banner {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    z-index: 10;
+
+    top:0;
+    transform: translateY(-160%) scale(0.85);;
+
+    
+    max-width: 350px;
+    min-height: 80px;
+    padding: 16px 24px;
+    opacity:0;
+
+    text-align: center;
+    border-radius: 4px;
+    background-color: rgba(184, 30, 30, 0.75);
+    color: var(--text-color);
+    box-shadow: 2px 1px 6px rgba(0, 0, 0, 0.7);
+
+    transition: all 0.3s ease-in-out;
+}
+
+.hollow-banner.visible {
+    opacity: 1;
+    transform: translateY(-110%) scale(1);
+}
+
+.hollow-banner strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+.hollow-banner span {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.filter-panel {
+    display: flex;
+    position:relative;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: 2px 1px 6px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    overflow:hidden;
+
+    transition: all 0.6s ease;
+}
+
+#NsfwTags {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    justify-self: center;
+    width: 75%;
+    gap: 5px;
+    margin: 10px;
+}
+
+.nsfwWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.tag {
+    padding: 6px 10px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.15s;
+    user-select: none;
+    text-align: center;
+    transition: all 0.5s ease;
+}
+
+.tag:hover {
+    border-color: black;
+}
+
+.tag.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+.tag.active:hover {
+    border-color: #ffa2a2;
+}
+
+.button-container {
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
 .image-feed-container {
     flex:1 1 70%;
     display:flex;
@@ -93,85 +225,6 @@ html, body {
     width: 28px;
     height: 28px;
     stroke-width: 2.5px;
-}
-
-.filter-panel {
-    flex: 0 0 30%;
-    min-height:40%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    padding: 30px;
-    margin-top: 50px;
-    border-radius: 4px;
-    box-shadow: 2px 1px 6px rgba(0, 0, 0, 0.5);
-    transition: all 0.3s ease;
-    overflow:hidden;
-
-    transition: all 0.6s ease;
-}
-
-#NsfwTags {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.tags-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    justify-self: center;
-    width: 75%;
-    gap: 5px;
-    margin: 10px;
-}
-
-.nsfwWrap {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.tag {
-    padding: 6px 10px;
-    font-size: 13px;
-    border: 1px solid #ccc;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.15s;
-    user-select: none;
-    text-align: center;
-    transition: all 0.5s ease;
-}
-
-.tag:hover {
-    border-color: black;
-}
-
-.tag.active {
-    background: #111;
-    color: #fff;
-    border-color: #111;
-}
-
-.tag.active:hover {
-    border-color: #ffa2a2;
-}
-
-.button-container {
-    width:100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
 }
 
 .avg-button {
@@ -274,7 +327,6 @@ body[data-theme="dark"] .title span.disabled:hover {
     right: -16px;
 }
 
-/* Текст под переключателем */
 .label-text {
     font-size: 12px;
     margin-top: 4px;
@@ -301,6 +353,11 @@ body[data-theme="light"] {
 body[data-theme="light"] .filter-panel {
     background-color: var(--panel-bg);
     color: var(--text-color);
+}
+
+body[data-theme="light"] .hollow-banner {
+    background-color: rgba(184, 30, 30, 0.95);
+    color:white;
 }
 
 body[data-theme="light"] .tag {
