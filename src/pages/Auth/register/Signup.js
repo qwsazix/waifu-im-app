@@ -35,7 +35,7 @@ function Signup({ theme }) {
 
         setFetchStatus('loading');
         try {
-            const timeoutId = setTimeout(() => {
+            var timeoutId = setTimeout(() => {
                 controller.abort();
             }, 60000);
 
