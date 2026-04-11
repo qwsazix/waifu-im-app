@@ -49,6 +49,7 @@ const Main = ({ openLightBox }) => {
 
     const [isHollow, setHollow] = useState(false);
     const handleSearch = async () => {
+        let set = new Set(selectedTags);
         const params = new URLSearchParams();
         if (imagesNum > 1) {
             params.append('PageSize', imagesNum);
@@ -57,17 +58,27 @@ const Main = ({ openLightBox }) => {
         params.append('isNsfw', isNsfw);
 
         //exlclude fetched ids from search
-        fetchedImages.slice(-300).forEach(img => {
-            params.append('ExcludedIds', img.id);
+        const excluded = fetchedImages.filter(img => { //optimization, to prevent images that won't appear anyway from being included in excludedIds and avoid overloading the query
+            const slugs = img.tags.map(tag => tag.slug);
+
+            return slugs.some(slug => set.has(slug));
         });
-        console.log(params.toString());
-        console.log(selectedTags);
+
+        if (selectedTags.length > 0) {
+            excluded.slice(-300).forEach(img => {
+                params.append('ExcludedIds', img.id)
+            });
+        } else {
+            fetchedImages.slice(-300).forEach(img => {
+                params.append('ExcludedIds', img.id);
+            });
+        }
+        
         try {
             const response = await fetch(`${baseURL}/images?${params.toString()}`);
             if (!response.ok) throw new Error(response);
             const data = await response.json();
             const newItem = data.items[0];
-            console.log(data);
 
             if (!newItem) setHollow(true);//no images found by selected tags OR every image of selected tags have already been fetched
             else {
@@ -78,7 +89,6 @@ const Main = ({ openLightBox }) => {
                     );
                     return [...prev, ...uniqueNew];
                 });
-                console.log(fetchedImages);
             }
 
         } catch (error) {
@@ -123,7 +133,7 @@ const Main = ({ openLightBox }) => {
                         { display: 'flex', 'gap': '5px', justifyContent: 'center', alignItems: 'center' }
                     }>
                         <label for="images-number">Amount:</label>
-                        <div style={{ display: 'flex', 'flex-direction': 'row', justifyContent:'center', alignItems:'center'}}>
+                        <div style={{ display: 'flex', 'flex-direction': 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <input
                                 id="images-number"
                                 value={imagesNum}
