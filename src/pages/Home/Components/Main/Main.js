@@ -5,6 +5,7 @@ import SfwTags from './Components/SfwTags.js';
 import NsfwTags from './Components/NsfwTags.js';
 import ImageFeed from '../ImageFeed/ImageFeed.js';
 import './Main.css';
+import { RotateCcw } from 'lucide-react';
 
 
 const Main = ({ openLightBox }) => {
@@ -15,6 +16,7 @@ const Main = ({ openLightBox }) => {
     const [isNsfw, setNsfw] = useState('False');
     const [selectedTags, setSelected] = useState([]);
     const [fetchedImages, setFetchedImage] = useState([]);
+    const [imagesNum, setImagesNum] = useState(1);
 
     useEffect(() => {
         const getTags = async () => {
@@ -38,7 +40,6 @@ const Main = ({ openLightBox }) => {
     const toggleTagBtn = (tagName) => {
         setSelected(prev => {
             if (prev.includes(tagName)) {
-                console.log(isNsfw);
                 return prev.filter(item => item !== tagName);
             } else {
                 return [...prev, tagName];
@@ -49,23 +50,27 @@ const Main = ({ openLightBox }) => {
     const [isHollow, setHollow] = useState(false);
     const handleSearch = async () => {
         const params = new URLSearchParams();
+        if (imagesNum > 1) {
+            params.append('PageSize', imagesNum);
+        }
         selectedTags.forEach(tag => params.append('IncludedTags', tag))
         params.append('isNsfw', isNsfw);
-        fetchedImages.slice(-300).forEach(img => {
+        fetchedImages.slice(-100).forEach(img => {
             params.append('ExcludedIds', img.id);
         });
+        console.log(params.toString());
 
         try {
             const response = await fetch(`${baseURL}/images?${params.toString()}`);
-            console.log(`${baseURL}/images?${params.toString()}`);
             if (!response.ok) throw new Error(response);
             const data = await response.json();
             const newItem = data.items[0];
+            console.log(data);
 
             if (!newItem) setHollow(true);//no images found by selected tags OR every image of selected tags have already been fetched
             else {
                 setHollow(false);
-                setFetchedImage(prev => [...prev, newItem])
+                setFetchedImage(prev => [...prev, ...data.items])
             }
 
         } catch (error) {
@@ -106,12 +111,41 @@ const Main = ({ openLightBox }) => {
                         />
                     </div>
 
+                    <div style={
+                        { display: 'flex', 'gap': '5px', justifyContent: 'center', alignItems: 'center' }
+                    }>
+                        <label for="images-number">Amount:</label>
+                        <div style={{ display: 'flex', 'flex-direction': 'row', justifyContent:'center', alignItems:'center'}}>
+                            <input
+                                id="images-number"
+                                value={imagesNum}
+                                onChange={(e) => {
+                                    setImagesNum(e.target.value);
+                                    console.log(imagesNum);
+                                }}
+                                onBlur={() => {
+                                    if (imagesNum > 50) setImagesNum(50);
+                                    if (imagesNum < 1 || imagesNum === "") setImagesNum(1);
+                                    console.log(imagesNum);
+                                }}
+                                type="number"
+                                min="1" max="50"
+                                placeholder='1-50'
+                            />
+                            <button
+                                className='reset-btn'
+                                title='Reset input to default value'
+                                onClick={() => setImagesNum(1)}
+                            ><RotateCcw /></button>
+                        </div>
+                    </div>
+
                     <div className='button-container'>
                         <button
                             className='avg-button search'
                             onClick={handleSearch}
                             title='Fetch images from waifu.im database'
-                        >{selectedTags.length === 0 ? 'Search (random)' : 'Search'}</button>
+                        >{`${selectedTags.length === 0 ? 'Search (random)' : 'Search'} x${imagesNum}`}</button>
 
                         {fetchedImages.length > 0 && (
                             <button

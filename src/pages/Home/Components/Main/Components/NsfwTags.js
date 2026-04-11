@@ -18,7 +18,7 @@ export default function NsfwTags({ isNsfw, setNsfw, tags, toggle, selectedTags, 
                 return filtered.length === prev.length ? prev : filtered;
             });
         }
-    }, [isNsfw, nsfwSlugs]);
+    }, [isNsfw, nsfwSlugs,setSelected]);
 
 
     return (
@@ -35,7 +35,7 @@ export default function NsfwTags({ isNsfw, setNsfw, tags, toggle, selectedTags, 
             </div>
 
             {isNsfw === 'True' && (
-                <div id="NsfwTags">
+                <div className="NsfwTags">
                     <div className='tags-container'>
                         {nsfw.map(item => (
                             <button
