@@ -55,11 +55,13 @@ const Main = ({ openLightBox }) => {
         }
         selectedTags.forEach(tag => params.append('IncludedTags', tag))
         params.append('isNsfw', isNsfw);
-        fetchedImages.slice(-100).forEach(img => {
+
+        //exlclude fetched ids from search
+        fetchedImages.slice(-300).forEach(img => {
             params.append('ExcludedIds', img.id);
         });
         console.log(params.toString());
-
+        console.log(selectedTags);
         try {
             const response = await fetch(`${baseURL}/images?${params.toString()}`);
             if (!response.ok) throw new Error(response);
@@ -70,7 +72,13 @@ const Main = ({ openLightBox }) => {
             if (!newItem) setHollow(true);//no images found by selected tags OR every image of selected tags have already been fetched
             else {
                 setHollow(false);
-                setFetchedImage(prev => [...prev, ...data.items])
+                setFetchedImage(prev => {
+                    const uniqueNew = data.items.filter(
+                        item => !prev.some(existing => existing.id === item.id)
+                    );
+                    return [...prev, ...uniqueNew];
+                });
+                console.log(fetchedImages);
             }
 
         } catch (error) {
