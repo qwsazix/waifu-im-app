@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useFavourites } from "../../context/FavouritesContext";
 
-import { LoaderCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LoaderCircle, ChevronLeft, ChevronRight, ChevronFirst, ChevronLast } from 'lucide-react';
 
 import Lightbox from "../Home/Components/Lightbox/Lightbox";
 
@@ -11,7 +11,7 @@ import './Cabinet.css';
 
 const Cabinet = () => {
     const [isActive, setActive] = useState(false);
-    const [currentImage, setCurrentImage] = useState(null);
+    const [currentImage, setCurrentImage] = useState({});
     const [pages, setPages] = useState(1);
 
     const { favourites, fetchStatus } = useFavourites();
@@ -27,8 +27,8 @@ const Cabinet = () => {
         setToken(localStorage.getItem("token"));
     }, [setToken]);
 
-    const openLightBox = (url) => { setActive(true); setCurrentImage(url); };
-    const closeLightBox = () => { setActive(false); setCurrentImage(null); };
+    const openLightBox = (image) => { setActive(true); setCurrentImage(image); };
+    const closeLightBox = () => { setActive(false); setCurrentImage({}); };
 
     if (fetchStatus === 'loading') {
         return (
@@ -58,35 +58,61 @@ const Cabinet = () => {
                     <p className="empty-fav">You haven't saved any images yet</p>
                 ) : (
                     <>
-                        <button
-                            className="feed-button"
-                            onClick={() => setPages(p => p - 1)}
-                            disabled={pages <= 1}
-                            style={{ opacity: pages > 1 ? 1 : 0 }}
-                        >
-                            <ChevronLeft />
-                        </button>
+                        <div style={{ 'display': 'flex', 'gap': '20px', 'flexDirection': 'row-reverse' }}>
+                            <button
+                                className="feed-button"
+                                onClick={() => setPages(p => p - 1)}
+                                style={{
+                                    opacity: pages > 1 ? 1 : 0,
+                                    pointerEvents: pages > 1 ? 'auto' : 'none'
+                                }}
+                                title="Previous page"
+                            ><ChevronLeft /></button>
+
+                            <button
+                                className="feed-button"
+                                onClick={() => setPages(1)}
+                                style={{
+                                    opacity: pages > 1 ? 1 : 0,
+                                    pointerEvents: pages > 1 ? 'auto' : 'none'
+                                }}
+                                title="First page"
+                            ><ChevronFirst /></button>
+                        </div>
 
                         <div className="fav-grid">
-                            {page_array.map((url) => (
+                            {page_array.map((img) => (
                                 <img
-                                    key={url}
+                                    key={img.url}
                                     className="favourite-img"
-                                    src={url}
+                                    src={img.url}
                                     alt="Favourite"
-                                    onClick={() => openLightBox(url)}
+                                    onClick={() => openLightBox(img)}
                                 />
                             ))}
                         </div>
 
-                        <button
-                            className="feed-button"
-                            onClick={() => setPages(p => p + 1)}
-                            disabled={pages >= max_page}
-                            style={{ opacity: pages < max_page ? 1 : 0 }}
-                        >
-                            <ChevronRight />
-                        </button>
+                        <div style={{ 'display': 'flex', 'gap': '20px' }}>
+                            <button
+                                className="feed-button"
+                                onClick={() => setPages(p => p + 1)}
+                                style={{
+                                    opacity: pages < max_page ? 1 : 0,
+                                    pointerEvents: pages < max_page ? 'auto' : 'none'
+                                }}
+                                title="Next page"
+                            ><ChevronRight /></button>
+
+                            <button
+                                className="feed-button"
+                                onClick={() => setPages(max_page)}
+                                style={{
+                                    opacity: pages < max_page ? 1 : 0,
+                                    pointerEvents: pages < max_page ? 'auto' : 'none'
+                                }}
+                                title="Last page"
+                            ><ChevronLast /></button>
+                        </div>
                     </>
                 )}
             </div>
@@ -94,7 +120,7 @@ const Cabinet = () => {
             <Lightbox
                 isActive={isActive}
                 closeLightBox={closeLightBox}
-                imageSrc={currentImage}
+                image={currentImage}
                 mode="cabinet"
             />
         </div>

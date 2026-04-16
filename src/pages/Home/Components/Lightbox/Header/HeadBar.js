@@ -1,15 +1,15 @@
 import { useAuth } from "../../../../../context/AuthContext";
 import { useFavourites } from "../../../../../context/FavouritesContext";
 import { useState, useEffect, useRef } from "react";
-import { Trash2 } from 'lucide-react';
+import { Trash2, Bookmark, ExternalLink, X } from 'lucide-react';
 
 import { BASE_URL } from "../../../../../config";
 
-export default function HeadBar({ closeLightBox, imageSrc, mode }) {
+export default function HeadBar({ closeLightBox, image, mode }) {
     const { token, logout } = useAuth();
     const { favourites, setFavourites } = useFavourites();
     const [status, setStatus] = useState(null);
-    // { type: 'success' | 'error', message: string, image: imageSrc }
+    // { type: 'success' | 'error', message: string, image: image.url }
     const logoutTimerRef = useRef(null);
 
 
@@ -35,7 +35,10 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                     Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    img: imageSrc
+                    img: {
+                        url: image.url,
+                        source: image.source
+                    }
                 })
 
             })
@@ -53,7 +56,7 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
 
             if (response.status === 409) {
                 setLoading(false);
-                await removeFavourite(imageSrc);
+                await removeFavourite(image.url);
                 return;
             }
 
@@ -62,8 +65,8 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                 throw new Error(data.message || 'Unknown error');
             }
 
-            setStatus({ type: 'success', message: 'Sucess', image: imageSrc });
-            setFavourites(prev => [...prev, imageSrc]);
+            setStatus({ type: 'success', message: 'Sucess', image: image.url });
+            setFavourites(prev => [...prev, image]);
 
         } catch (error) {
             setStatus({ type: 'error', message: 'Error (check console)' });
@@ -83,7 +86,9 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ img: url })
+                body: JSON.stringify({ 
+                    img: {url: url}
+                })
             })
 
             const data = await response.json();
@@ -97,7 +102,7 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                 throw new Error(data.message || `HTTP ${response.status}`);
             }
 
-            setStatus({ type: 'success', message: data.message, imageSrc });
+            setStatus({ type: 'success', message: data.message, image });
             setFavourites(prev => prev.filter(img => img !== url));
         } catch (error) {
             setStatus({ type: 'error', message: error.message });
@@ -116,13 +121,13 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                     closeLightBox();
                     setStatus(null);
                 }}
-            >× Close</button>
+            ><X size={16}/> Close</button>
 
             {token && mode === "main" && (
                 <button
                     className={`header-buttons favourite ${status
                         ? status.type
-                        : favourites.includes(imageSrc)
+                        : favourites.includes(image.url)
                             ? 'added'
                             : ''
                         }`}
@@ -130,9 +135,14 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                     onClick={addToFavourite}
                 >{status
                     ? status.message
-                    : favourites.includes(imageSrc)
+                    : favourites.includes(image.url)
                         ? 'Already in favourites'
-                        : '★ Add to favourites'}
+                        : (
+                            <>
+                                <Bookmark size={18}/> Add to favouirtes
+                            </>
+                        )
+                    }
                 </button>
             )}
 
@@ -140,7 +150,7 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                 <button
                     className={`header-buttons remove ${status ? status.type : ""}`}
                     title="Remove from favourites"
-                    onClick={() => removeFavourite(imageSrc)}
+                    onClick={() => removeFavourite(image.url)}
                 >{status ? (status.message) : (
                     <>
                         <Trash2 size={16} />
@@ -148,6 +158,14 @@ export default function HeadBar({ closeLightBox, imageSrc, mode }) {
                     </>
                 )}</button>
             )}
+
+            <button
+                className="header-buttons"
+                title="Link to the origin of the image"
+                onClick={() => {
+                    window.open(image.source, "_blank", "noopener,noreferrer");
+                }}
+            ><ExternalLink size={16}/> Origin</button>
         </div>
     )
 }

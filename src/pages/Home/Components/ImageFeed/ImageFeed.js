@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronFirst, ChevronLast } from 'lucide-react';
 
 export default function ImageFeed({ fetchedImages, openLightBox }) {
     const ITEMS_ON_PAGE = 6;
@@ -27,14 +27,28 @@ export default function ImageFeed({ fetchedImages, openLightBox }) {
     return (
         <div className={`image-feed-container ${fetchedImages.length === 0 ? 'hidden' : ''}`}>
 
-            <button
-                className="feed-button"
-                onClick={() => setPages(p => p - 1)}
-                style={{
-                    opacity: pages > 1 ? 1 : 0,
-                    pointerEvents: pages > 1 ? 'auto' : 'none'
-                }}
-            ><ChevronLeft /></button>
+            <div style={{ 'display': 'flex', 'gap': '20px', 'flexDirection':'row-reverse'}}>
+                <button
+                    className="feed-button"
+                    onClick={() => setPages(p => p - 1)}
+                    style={{
+                        opacity: pages > 1 ? 1 : 0,
+                        pointerEvents: pages > 1 ? 'auto' : 'none'
+                    }}
+                    title="Previous page"
+                ><ChevronLeft /></button>
+
+                <button
+                    className="feed-button"
+                    onClick={() => setPages(1)}
+                    style={{
+                        opacity: pages > 1 ? 1 : 0,
+                        pointerEvents: pages > 1 ? 'auto' : 'none'
+                    }}
+                    title="First page"
+                ><ChevronFirst /></button>
+            </div>
+
 
             <div className="image-feed">
                 {page_array.map((img) => (
@@ -42,19 +56,33 @@ export default function ImageFeed({ fetchedImages, openLightBox }) {
                         key={img.id}
                         src={getThumbnail(img.url)}
                         alt={img.tags.map(t => t.description).join(', ')}
-                        onClick={() => openLightBox(img.url)}
+                        onClick={() => openLightBox(img)}
                     />
                 ))}
             </div>
 
-            <button
-                className="feed-button"
-                onClick={() => setPages(p => p + 1)}
-                style={{
-                    opacity: pages < max_page ? 1 : 0,
-                    pointerEvents: pages < max_page ? 'auto' : 'none'
-                }}
-            ><ChevronRight /></button>
+
+            <div style={{ 'display': 'flex', 'gap': '20px' }}>
+                <button
+                    className="feed-button"
+                    onClick={() => setPages(p => p + 1)}
+                    style={{
+                        opacity: pages < max_page ? 1 : 0,
+                        pointerEvents: pages < max_page ? 'auto' : 'none'
+                    }}
+                    title="Next page"
+                ><ChevronRight /></button>
+
+                <button
+                    className="feed-button"
+                    onClick={() => setPages(max_page)}
+                    style={{
+                        opacity: pages < max_page ? 1 : 0,
+                        pointerEvents: pages < max_page ? 'auto' : 'none'
+                    }}
+                    title="Last page"
+                ><ChevronLast /></button>
+            </div>
 
         </div>
 

@@ -37,16 +37,16 @@ export default function Home() {
     }, [token, logout]);
 
     const [isActive, setActive] = useState(false);
-    const [activeImageSrc, setActiveImageSrc] = useState(null);
+    const [activeImage, setActiveImage] = useState({});
 
     const openLightBox = (src) => {
         setActive(true);
-        setActiveImageSrc(src);
+        setActiveImage(src);
     }
 
     const closeLightBox = () => {
         setActive(false);
-        setActiveImageSrc(null);
+        setActiveImage({});
     }
 
     return (
@@ -57,7 +57,7 @@ export default function Home() {
             <Lightbox
                 isActive={isActive}
                 closeLightBox={closeLightBox}
-                imageSrc={activeImageSrc}
+                image={activeImage}
                 mode="main"
             />
         </>

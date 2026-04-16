@@ -73,24 +73,28 @@ const Main = ({ openLightBox }) => {
                 params.append('ExcludedIds', img.id);
             });
         }
-        
+
         try {
             const response = await fetch(`${baseURL}/images?${params.toString()}`);
             if (!response.ok) throw new Error(response);
             const data = await response.json();
-            const newItem = data.items[0];
 
-            if (!newItem) setHollow(true);//no images found by selected tags OR every image of selected tags have already been fetched
-            else {
-                setHollow(false);
-                setFetchedImage(prev => {
-                    const uniqueNew = data.items.filter(
-                        item => !prev.some(existing => existing.id === item.id)
-                    );
-                    return [...prev, ...uniqueNew];
-                });
+            if (!data.items[0]) {
+                setHollow(true); //no images found by selected tags OR every image of selected tags have already been fetched
+            } else {
+                const uniqueNew = data.items.filter(
+                    item => !fetchedImages.some(existing => existing.id === item.id)
+                );
+
+                if (uniqueNew.length > 0) {
+                    setFetchedImage(prev => [...prev, ...uniqueNew]);
+                    setHollow(false);
+                }
+
+                if (uniqueNew.length === 0 && fetchedImages.length >= data.totalCount) {
+                    setHollow(true);
+                }
             }
-
         } catch (error) {
             console.error(error);
         }
@@ -132,19 +136,17 @@ const Main = ({ openLightBox }) => {
                     <div style={
                         { display: 'flex', 'gap': '5px', justifyContent: 'center', alignItems: 'center' }
                     }>
-                        <label for="images-number">Amount:</label>
-                        <div style={{ display: 'flex', 'flex-direction': 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <label htmlFor="images-number">Amount:</label>
+                        <div style={{ display: 'flex', 'flexDirection': 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <input
                                 id="images-number"
                                 value={imagesNum}
                                 onChange={(e) => {
                                     setImagesNum(e.target.value);
-                                    console.log(imagesNum);
                                 }}
                                 onBlur={() => {
                                     if (imagesNum > 50) setImagesNum(50);
                                     if (imagesNum < 1 || imagesNum === "") setImagesNum(1);
-                                    console.log(imagesNum);
                                 }}
                                 type="number"
                                 min="1" max="50"
