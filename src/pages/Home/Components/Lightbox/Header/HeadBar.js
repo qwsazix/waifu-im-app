@@ -66,7 +66,7 @@ export default function HeadBar({ closeLightBox, image, mode }) {
             }
 
             setStatus({ type: 'success', message: 'Sucess', image: image.url });
-            setFavourites(prev => [...prev, image]);
+            setFavourites(prev => [...prev, {url: image.url, source:image.source}]);
 
         } catch (error) {
             setStatus({ type: 'error', message: 'Error (check console)' });
@@ -103,7 +103,7 @@ export default function HeadBar({ closeLightBox, image, mode }) {
             }
 
             setStatus({ type: 'success', message: data.message, image });
-            setFavourites(prev => prev.filter(img => img !== url));
+            setFavourites(prev => prev.filter(obj => obj.url !== url));
         } catch (error) {
             setStatus({ type: 'error', message: error.message });
             console.error(`Failed to remove: ${error.message}`)
@@ -127,7 +127,7 @@ export default function HeadBar({ closeLightBox, image, mode }) {
                 <button
                     className={`header-buttons favourite ${status
                         ? status.type
-                        : favourites.includes(image.url)
+                        : favourites.map(obj => obj.url).includes(image.url)
                             ? 'added'
                             : ''
                         }`}
@@ -135,7 +135,7 @@ export default function HeadBar({ closeLightBox, image, mode }) {
                     onClick={addToFavourite}
                 >{status
                     ? status.message
-                    : favourites.includes(image.url)
+                    : favourites.map(obj => obj.url).includes(image.url)
                         ? 'Already in favourites'
                         : (
                             <>
